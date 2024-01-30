@@ -13,7 +13,9 @@ class Logger:
     ERR_PREFIX = '[ERR] '
     WRN_PREFIX = '[WRN] '
     REC_PREFIX = '[REC] '
-    LOG_DIRECTORY = 'logs'
+    HTML_PREFIX = '[JSON] '
+    #LOG_DIRECTORY = 'logs'
+    LOG_DIRECTORY = '/var/log/pypacket'
 
     def __init__(self):
         """Sets up the logger, via calling setup()."""
@@ -27,6 +29,62 @@ class Logger:
         """
         self.__log_any(Colors.BLUE, self.SYS_PREFIX, log_message)
         logging.info(log_message)
+
+    def log_html(self, log_message):
+        """Logs a html message to console, file.
+
+        Args:
+            log_message: The string message to log.
+        """
+        json_message = '{'
+        try:
+            x = aprslib.parse(log_message)
+            t = time()
+            json_message = json_message + '"time":"' + str(ctime(t)) + '"'
+            try:
+                json_message += ',"from":"' + str(x["from"]) + '"'
+            except:
+                json_message += ',"from":"error"'
+            try:
+                json_message += ',"to":"' + str(x["to"]) + '"'
+            except:
+                json_message += ',"to":"error"'
+            try:
+                json_message += ',"longitude":"' + str(x["longitude"]) + '"'
+            except:
+                json_message += ',"longitude":"error"'
+            try:
+                json_message += ',"latitude":"' + str(x["latitude"]) + '"'
+            except:
+                json_message += ',"latitude":"error"'
+            try:
+                json_message += ',"comment":"' + str(x["comment"]).replace("\"", "\\\"") + '"'
+            except:
+                json_message += ',"comment":"error"'
+            try:
+                json_message += ',"via":"' + str(x["via"]) + '"'
+            except:
+                json_message += ',"via":"error"'
+            try:
+                json_message += ',"symbol":"' + str(x["symbol"]) + '"'
+            except:
+                json_message += ',"symbol":"error"'
+            try:
+                json_message += ',"raw":"' + str(x["raw"]).replace("\\", "\\\\").replace("\"", "\\\"") + '"'
+            except:
+                json_message += ',"raw":"error"'
+            try:
+                json_message += ',"path":"' + str(x["path"]) + '"'
+            except:
+                json_message += ',"path":"error"'
+            json_message += ',"source":"RF"'
+            log_message = json_message + '}'
+        except:
+            log_message = 'An exception occurred'
+        json_message = json_message + '}'
+
+        self.__log_any(Colors.BLUE, self.HTML_PREFIX, log_message)
+        logging.info('[JSON] ' + log_message)
 
     def log_error(self, log_message):
         """Logs an error message to console, file.

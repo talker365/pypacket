@@ -97,6 +97,11 @@ class Receiver:
         Args:
             decoded_packet: The raw, decoded APRS packet string.
         """
+
+        print_friendly_packet = self.deserializer.to_readable_output(decoded_packet)
+        self.log_handler.log_packet(decoded_packet, print_friendly_packet)
+        self.log_handler.log_html(decoded_packet)
+
         for processor in self.processors:
             # Process in all configured processors.
             processor.handle(decoded_packet)
