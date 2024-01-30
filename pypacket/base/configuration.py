@@ -22,6 +22,10 @@ class Configuration:
         """Gets the configured listener frequency setting."""
         return self.data['listener']['frequency']
 
+    def serial(self):
+        """Gets the configured listener serial number setting."""
+        return self.data['listener']['serial']
+
     def gain(self):
         """Gets the configured listener gain setting."""
         return self.data['listener']['gain']
